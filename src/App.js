@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import UsersList from './components/Users/UsersList';
 import AddUser from './components/Users/AddUser';
-import Wrapper from './components/Helper/Wrapper';
+import ReactDom from 'react-dom'
 
 function App() {
   const [usersList, setUsersList] = useState([]);
@@ -18,10 +18,13 @@ function App() {
   }
   console.log(usersList)
   return (
-    <React.Fragment>
-      <AddUser adduser={addUsersHandler} />
-      {usersList.length > 0 && <UsersList users={usersList} />}
-    </React.Fragment>
+    ReactDom.createPortal(
+      <React.Fragment>
+        <AddUser adduser={addUsersHandler} />
+        {usersList.length > 0 && <UsersList users={usersList} />}
+      </React.Fragment>,
+      document.getElementById('main'))
+
   );
 }
 
