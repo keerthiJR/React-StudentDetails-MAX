@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import Card from '../UI/Card';
 import Button from '../UI/Button';
@@ -6,45 +6,39 @@ import classes from './AddUser.module.css';
 import ErrorModal from '../UI/ErrorModal';
 
 const AddUser = (props) => {
-
-  const [enteredUsername, setEnteredUsername] = useState('');
-  const [enteredAge, setEnteredAge] = useState('');
-  const [enteredDesignation, setEnteredDesignation] = useState('');
   const [error, setError] = useState();
+
+  const inputnameRef = useRef();
+  const inputageRef = useRef();
+  const inputdesignationRef = useRef();
 
   const addUserHandler = (event) => {
     event.preventDefault();
-    if (enteredUsername.trim().length === 0 || enteredDesignation.trim().length === 0 || enteredAge.trim().length === 0) {
+
+    const enteredUsernameRef = inputnameRef.current.value;
+    const enteredAgeRef = inputageRef.current.value;
+    const enteredDesignationRef = inputdesignationRef.current.value;
+    
+    if (enteredUsernameRef.trim().length === 0 || enteredDesignationRef.trim().length === 0 || enteredAgeRef.trim().length === 0) {
       setError({
         title: 'Invalid input',
         message: 'Please enter a valid name, age and designation'
       })
       return;
     }
-    if (+enteredAge < 0) {
+    if (+enteredAgeRef < 0) {
       setError({
         title: 'Invalid age',
         message: 'Please enter a valid age > 0'
       })
       return;
     }
-    props.adduser(enteredUsername, enteredAge, enteredDesignation)
-    setEnteredAge('');
-    setEnteredUsername('')
-    setEnteredDesignation('')
+
+    props.adduser(enteredUsernameRef, enteredAgeRef, enteredDesignationRef);
+    inputnameRef.current.value = '';
+    inputageRef.current.value = ''
+    inputdesignationRef.current.value = ''
   };
-
-  const usernameChangeHandler = (event) => {
-    setEnteredUsername(event.target.value)
-  }
-
-  const ageChangeHandler = (event) => {
-    setEnteredAge(event.target.value)
-  }
-
-  const designationChangeHandler = (event) => {
-    setEnteredDesignation(event.target.value)
-  }
 
   const onClickErrorModalHander = ()=>{
     setError(null)
@@ -56,11 +50,11 @@ const AddUser = (props) => {
       <Card className={classes.input}>
         <form onSubmit={addUserHandler}>
           <label htmlFor="username">Student Name</label>
-          <input id="username" type="text" value={enteredUsername} onChange={usernameChangeHandler} />
+          <input id="username" type="text" ref={inputnameRef} />
           <label htmlFor="age">Age (Years)</label>
-          <input id="age" type="number" value={enteredAge} onChange={ageChangeHandler} />
+          <input id="age" type="number"ref={inputageRef}/>
           <label htmlFor="username">Designation</label>
-          <input id="designation" type="text" value={enteredDesignation} onChange={designationChangeHandler} />
+          <input id="designation" type="text"  ref={inputdesignationRef}/>
           <Button type="submit">Add Student</Button>
         </form>
       </Card>
